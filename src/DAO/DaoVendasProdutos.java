@@ -1,0 +1,191 @@
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ */
+package DAO;
+
+import conexoes.ConexaoMySql;
+import model.ModelVendasProdutos;
+import java.util.ArrayList;
+
+/**
+ *
+ * @author Usuario
+ */
+public class DaoVendasProdutos extends ConexaoMySql {
+
+    /**
+     * grava vendasProdutos.
+     *
+     * @param pModelVendasProdutos
+     * @return
+     */
+    public int salvarVendasProdutosDAO(ModelVendasProdutos pModelVendasProdutos) {
+        try {
+            this.conectar();
+            return this.insertSQL(
+                    "INSERT INTO tbl_vendas_produtos ("
+                    + "fk_produto,"
+                    + "fk_vendas,"
+                    + "ven_pro_valor,"
+                    + "ven_pro_quantidade"
+                    + ") VALUES ("
+                    + "'" + pModelVendasProdutos.getProduto() + "',"
+                    + "'" + pModelVendasProdutos.getVendas() + "',"
+                    + "'" + pModelVendasProdutos.getVenProValor() + "',"
+                    + "'" + pModelVendasProdutos.getVenProQuantidade() + "'"
+                    + ");"
+            );
+        } catch (Exception e) {
+            e.printStackTrace();
+            return 0;
+
+        } finally {
+            this.fecharConexao();
+        }
+    }
+
+    /**
+     * recupera VendasProdutos
+     */
+    public ModelVendasProdutos getVendasProdutosDAO(int pIdVendaProduto) {
+        ModelVendasProdutos modelVendasProdutos = new ModelVendasProdutos();
+        try {
+            this.conectar();
+            this.executarSQL(
+                    " SELECT "
+                    + "pk_id_venda_produto,"
+                    + "fk_produto,"
+                    + "fk_vendas,"
+                    + " ven_pro_valor,"
+                    + "ven_pro_quantidade"
+                    + " FROM "
+                    + "tbl_vendas_produtos"
+                    + " WHERE "
+                    + "pk_id_venda_produto = '" + pIdVendaProduto + "'"
+                    + ";"
+            );
+
+            while (this.getResultSet().next()) {
+                modelVendasProdutos.setIdVendaProduto(this.getResultSet().getInt(1));
+                modelVendasProdutos.setProduto(this.getResultSet().getInt(2));
+                modelVendasProdutos.setVendas(this.getResultSet().getInt(3));
+                modelVendasProdutos.setVenProValor(this.getResultSet().getDouble(4));
+                modelVendasProdutos.setVenProQuantidade(this.getResultSet().getInt(5));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            this.fecharConexao();
+        }
+        return modelVendasProdutos;
+
+    }
+
+    public ArrayList<ModelVendasProdutos> getListaVendasProdutosDAO() {
+        ArrayList<ModelVendasProdutos> listaModelVendasProdutoses = new ArrayList();
+        ModelVendasProdutos modelVendasProdutos = new ModelVendasProdutos();
+        try {
+            this.conectar();
+            this.executarSQL(
+                    " SELECT "
+                    + "pk_id_venda_produto,"
+                    + "fk_produto,"
+                    + "fk_vendas,"
+                    + "ven_pro_valor,"
+                    + "ven_pro_quantidade"
+                    + " FROM "
+                    + "tbl_vendas_produtos"
+                    + ";"
+            );
+
+            while (this.getResultSet().next()) {
+                ModelVendasProdutos modelVendasProdutos1 = new ModelVendasProdutos();
+                modelVendasProdutos.setIdVendaProduto(this.getResultSet().getInt(1));
+                modelVendasProdutos.setProduto(this.getResultSet().getInt(2));
+                modelVendasProdutos.setVendas(this.getResultSet().getInt(3));
+                modelVendasProdutos.setVenProValor(this.getResultSet().getDouble(4));
+                modelVendasProdutos.setVenProQuantidade(this.getResultSet().getInt(5));
+                listaModelVendasProdutoses.add(modelVendasProdutos1);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            this.fecharConexao();
+        }
+        return listaModelVendasProdutoses;
+    }
+
+    public boolean atualizarVendasProdutosDAO(ModelVendasProdutos pModelVendasProdutos) {
+        try {
+            this.conectar();
+            return this.executarUpdateDeleteSQL(
+                    " UPDATE tbl_vendas_produtos SET "
+                    + "pk_id_venda_produto = '" + pModelVendasProdutos.getIdVendaProduto() + "',"
+                    + "fk_produto = '" + pModelVendasProdutos.getProduto() + "',"
+                    + "fk_vendas = '" + pModelVendasProdutos.getVendas() + "',"
+                    + "ven_pro_valor = '" + pModelVendasProdutos.getVenProValor() + "',"
+                    + "ven_pro_quantidade = '" + pModelVendasProdutos.getVenProQuantidade() + "'"
+                    + " WHERE "
+                    + "pk_id_venda_produto = '" + pModelVendasProdutos.getIdVendaProduto() + "'"
+            );
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        } finally {
+            this.fecharConexao();
+        }
+    }
+
+    public boolean excluirVendasProdutosDAO(int pIdVendaProduto) {
+        try {
+            this.conectar();
+            return this.executarUpdateDeleteSQL(
+                    " DELETE FROM tbl_vendas_produtos "
+                    + " WHERE "
+                    + "fk_vendas = '" + pIdVendaProduto + "'"
+                    + ";"
+            );
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        } finally {
+            this.fecharConexao();
+        }
+    }
+
+    public boolean salvarVendasProdutosDAO(ArrayList<ModelVendasProdutos> pListaModelVendasProdutoses){
+     try {
+            this.conectar();
+            int cont = pListaModelVendasProdutoses.size();
+            for (int i = 0; i < cont ; i++ ) {
+             this.insertSQL(
+                    "INSERT INTO tbl_vendas_produtos ("
+                    + "fk_vendas,"
+                    + "fk_produto,"
+                    + "ven_pro_valor,"
+                    + "ven_pro_quantidade"
+                    + ") VALUES ("
+                     + "'" + pListaModelVendasProdutoses.get(i).getVendas()+ "',"
+                     + "'" + pListaModelVendasProdutoses.get(i).getProduto()+ "',"    
+                    + "'" + pListaModelVendasProdutoses.get(i).getVenProValor() + "',"
+                    + "'" + pListaModelVendasProdutoses.get(i).getVenProQuantidade() + "'"
+                    + ");"
+            );
+     }
+     return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        } finally {
+            this.fecharConexao();
+        }
+    }
+    
+    
+
+}
+
+
+
