@@ -1,2 +1,2 @@
 # sansoft
-Sistema de Gestão de Vendas e Estoque em Java.
+Estudo nesse Sistema de Gestão de Vendas e Estoque em Java.
